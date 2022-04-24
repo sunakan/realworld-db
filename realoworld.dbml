@@ -1,0 +1,110 @@
+// https://dbdiagram.io/
+// にて貼り付けして見える
+
+Table "article_comments" {
+  "id" bigint [not null]
+  "author_id" bigint [not null]
+  "article_id" bigint [not null]
+  "body" text [not null]
+  "created_at" timestamp(6) [not null]
+  "updated_at" timestamp(6) [not null]
+}
+
+Table "article_tags" {
+  "id" bigint [not null]
+  "article_id" bigint [not null]
+  "tag_id" bigint [not null]
+  "created_at" timestamp(6) [not null]
+
+  Indexes {
+    (article_id, tag_id) [type: btree, unique, name: "article_tags_index"]
+  }
+}
+
+Table "articles" {
+  "id" bigint [not null]
+  "author_id" bigint [not null]
+  "title" "character varying" [not null]
+  "slug" "character varying" [not null]
+  "body" text [not null]
+  "description" "character varying" [not null]
+  "created_at" timestamp(6) [not null]
+  "updated_at" timestamp(6) [not null]
+
+  Indexes {
+    slug [type: btree, unique, name: "index_articles_on_slug"]
+  }
+}
+
+Table "favorites" {
+  "id" bigint [not null]
+  "user_id" bigint [not null]
+  "article_id" bigint [not null]
+  "created_at" timestamp(6) [not null]
+
+  Indexes {
+    (user_id, article_id) [type: btree, unique, name: "favorites_index"]
+  }
+}
+
+Table "followings" {
+  "id" bigint [not null]
+  "following_id" bigint [not null]
+  "follower_id" bigint [not null]
+  "created_at" timestamp(6) [not null]
+
+  Indexes {
+    (following_id, follower_id) [type: btree, unique, name: "followings_index"]
+  }
+}
+
+Table "profiles" {
+  "id" bigint [not null]
+  "user_id" bigint [not null]
+  "bio" text
+  "image" text
+  "created_at" timestamp(6) [not null]
+  "updated_at" timestamp(6) [not null]
+}
+
+Table "tags" {
+  "id" bigint [not null]
+  "name" "character varying" [not null]
+  "created_at" timestamp(6) [not null]
+  "updated_at" timestamp(6) [not null]
+}
+
+Table "users" {
+  "id" bigint [not null]
+  "email" "character varying" [not null]
+  "username" text [not null]
+  "password" text [not null]
+  "created_at" timestamp(6) [not null]
+  "updated_at" timestamp(6) [not null]
+
+  Indexes {
+    email [type: btree, unique, name: "index_users_on_email"]
+    username [type: btree, unique, name: "index_users_on_username"]
+  }
+}
+
+Ref:"articles"."id" < "favorites"."article_id"
+
+Ref:"users"."id" < "followings"."follower_id"
+
+Ref:"users"."id" < "article_comments"."author_id"
+
+Ref:"users"."id" < "followings"."following_id"
+
+Ref:"articles"."id" < "article_tags"."article_id"
+
+Ref:"users"."id" < "article_comments"."article_id"
+
+Ref:"tags"."id" < "article_tags"."tag_id"
+
+Ref:"users"."id" < "favorites"."user_id"
+
+Ref:"users"."id" < "profiles"."user_id"
+
+Ref:"users"."id" < "articles"."author_id"
+
