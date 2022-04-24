@@ -1,0 +1,28 @@
+---
+
+version: '3.8'
+
+services:
+  app:
+    build: .
+    working_dir: /var/local/app/
+    volumes:
+      - type: bind
+        source: ${PWD}/
+        target: /var/local/app/
+      - type: volume
+        source: bundle_install
+        target: /usr/local/bundle
+
+  db:
+    image: postgres:14
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_DB: hoge-db
+      POSTGRES_USER: hoge-user
+      POSTGRES_PASSWORD: hoge-pass
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8
+
+volumes:
+  bundle_install:
+    driver: local
